@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">VoiceNotesAI</string>
+    <string name="recording">Recording</string>
+    <string name="record_audio">Tap on Button to Start Recording</string>
+</resources>
