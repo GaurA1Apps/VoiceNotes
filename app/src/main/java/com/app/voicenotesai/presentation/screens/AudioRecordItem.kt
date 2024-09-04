@@ -39,7 +39,7 @@ fun AudioRecordItem(
     audioRecord: AudioRecord,
     onTogglePlayback: (Boolean) -> Unit
 ) {
-    val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    val formatter = SimpleDateFormat("MMM dd,yyyy", Locale.getDefault())
     val formattedDate = formatter.format(Date(audioRecord.timestamp))
 
     Column (
