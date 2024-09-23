@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FilledCircleIcon(
-    size: Dp = 24.dp,
+    size: Dp = 36.dp,
     color: Color = Color.White
 ) {
     Canvas(modifier = Modifier.size(size)) {

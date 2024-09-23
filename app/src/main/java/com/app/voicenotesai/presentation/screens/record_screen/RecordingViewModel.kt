@@ -1,4 +1,4 @@
-package com.app.voicenotesai.presentation.screens
+package com.app.voicenotesai.presentation.screens.record_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,8 +20,19 @@ class RecordingsViewModel @Inject constructor(
     private var _recordings = MutableStateFlow<List<AudioRecord>>(emptyList())
     val recordings: StateFlow<List<AudioRecord>> = _recordings
 
+    private var _currentRecording = MutableStateFlow<AudioRecord?>(null)
+    val currentRecording: StateFlow<AudioRecord?> = _currentRecording
+
     init {
         getRecordings()
+    }
+
+    fun setCurrentRecording(record: AudioRecord) {
+        _currentRecording.value = record
+    }
+
+    fun getCurrentRecording(): AudioRecord? {
+        return _currentRecording.value
     }
 
     private fun getRecordings() {

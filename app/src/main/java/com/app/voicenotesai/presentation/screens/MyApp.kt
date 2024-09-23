@@ -1,16 +1,27 @@
 package com.app.voicenotesai.presentation.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,7 +29,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.app.voicenotesai.data.local.entities.AudioRecord
@@ -26,25 +43,33 @@ import com.app.voicenotesai.navigation.NavGraphSetup
 import com.app.voicenotesai.presentation.components.AudioRecordAction
 import com.app.voicenotesai.presentation.components.AudioRecordBottomSheet
 import com.app.voicenotesai.presentation.components.BottomNavigationBar
+import com.app.voicenotesai.presentation.components.FilledCircleIcon
 import com.app.voicenotesai.presentation.components.RecordFAB
 import com.app.voicenotesai.presentation.components.TopBar
+import com.app.voicenotesai.presentation.screens.record_screen.RecordingsViewModel
 import com.app.voicenotesai.recorder.AndroidAudioRecorder
 import com.app.voicenotesai.utils.PermissionUtils
-import com.app.voicenotesai.voice_to_text.VoiceToTextParser.Companion.TAG
+import com.app.voicenotesai.utils.extractSummary
+import com.app.voicenotesai.utils.extractTitle
+import com.app.voicenotesai.utils.extractTranscript
+import com.app.voicenotesai.vertex_ai_response.AIResponseGenerator
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyApp() {
+    val TAG = "MyApp"
     val navController = rememberNavController()
+    val contentResolver = navController.context.contentResolver
+    val aiResponseGenerator = AIResponseGenerator(contentResolver)
     val permissionUtils = PermissionUtils(navController.context)
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isRecordBottomSheetOpen by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     //Injecting ViewModel
     val recordingsViewModel: RecordingsViewModel = hiltViewModel()
@@ -53,14 +78,6 @@ fun MyApp() {
     val recorder by lazy { AndroidAudioRecorder(navController.context) }
     var audioFile: File? = null
 
-    /*val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(navController.context)
-    val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-    val voiceToTextParser by lazy { VoiceToTextParser(application) }
-    val state by voiceToTextParser.state.collectAsStateWithLifecycle()
-    startSpeechToText(navController.context, speechRecognizerIntent, speechRecognizer, onTextChanged = {
-        newText = it
-    })*/
-
     Scaffold(
         topBar = {
             TopBar()
@@ -68,13 +85,29 @@ fun MyApp() {
         bottomBar = {
             BottomNavigationBar(navController)
         },
+        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            RecordFAB {
+            /*RecordFAB {
                 // Handle FAB click
                 if (permissionUtils.hasRecordAudioPermission()) {
                     isRecordBottomSheetOpen = true
                 } else {
                     permissionUtils.requestRecordAudioPermission()
+                }
+            }*/
+
+            Box() {
+                FloatingActionButton(
+                    onClick = { /* stub */ },
+                    shape = CircleShape,
+                    containerColor = Color.Red,
+                    contentColor = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(80.dp)
+                        .offset(y = 50.dp)
+                ) {
+                    FilledCircleIcon()
                 }
             }
         }
@@ -119,6 +152,8 @@ fun MyApp() {
                         is AudioRecordAction.SaveAudio -> {
                             scope.launch {
                                 recorder.stop()
+
+                                // Handle closing the bottom sheet
                                 scope.launch {
                                     sheetState.hide()
                                 }.invokeOnCompletion {
@@ -127,73 +162,56 @@ fun MyApp() {
                                     }
                                 }
 
-                                /*val textObtained = state.spokenText.ifEmpty {
-                                    state.error ?: "Error"
-                                }*/
-                                // Handle Audio Saving
-                                val record = AudioRecord(
-                                    audioPath = audioFile?.absolutePath ?: "",
-                                    title = "Audio File Title",
-                                    description = "Sample Description",
-                                    timestamp = System.currentTimeMillis(),
-                                    durationInSeconds = 8
-                                )
-                                recordingsViewModel.insertRecord(record)
+                                isLoading = true
+
+                                val result =
+                                    aiResponseGenerator.getTranscription(audioFile!!.toUri())
+
+                                if (result.isSuccess) {
+                                    val response = result.getOrThrow()
+                                    Log.d(TAG, "Generated Text: $response")
+
+                                    Log.d("Title", extractTitle(response))
+                                    Log.d("Summary", extractSummary(response))
+                                    Log.d("Transcript", extractTranscript(response))
+
+                                    // Handle Audio Saving
+                                    val record = AudioRecord(
+                                        audioPath = audioFile!!.absolutePath ?: "",
+                                        title = extractTitle(response),
+                                        description = extractSummary(response),
+                                        transcript = extractTranscript(response),
+                                        timestamp = System.currentTimeMillis(),
+                                        durationInSeconds = 8
+                                    )
+                                    recordingsViewModel.insertRecord(record)
+                                } else {
+                                    Log.e(
+                                        TAG,
+                                        "Error generating AI response: ${result.exceptionOrNull()}"
+                                    )
+                                }
+                                isLoading = false
                             }
                         }
                     }
                 }
             )
         }
+
+        if (isLoading) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)) // Semi-transparent background
+            ) {
+                CircularProgressIndicator() // Show loading spinner
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Transcribing audio, please wait...", fontSize = 16.sp)
+            }
+        }
     }
 }
 
-private fun startSpeechToText(
-    context: Context,
-    speechRecognizerIntent: Intent,
-    speechRecognizer: SpeechRecognizer,
-    onTextChanged: (String) -> Unit
-) {
-    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-    speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
-    speechRecognizer.setRecognitionListener(object : RecognitionListener {
-        override fun onReadyForSpeech(bundle: Bundle) {}
-
-        override fun onBeginningOfSpeech() {
-            Log.d(TAG, "Beginning of speech")
-        }
-
-        override fun onRmsChanged(v: Float) {}
-
-        override fun onBufferReceived(bytes: ByteArray) {
-            Log.d(TAG, "BufferRecieved: $bytes")
-        }
-
-        override fun onEndOfSpeech() {
-            Log.d(TAG, "End of speech.")
-        }
-
-        override fun onError(i: Int) {
-            Log.d(TAG, "Error: $i")
-        }
-
-        override fun onResults(bundle: Bundle) {
-            val matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            if (matches != null && matches.isNotEmpty()) {
-                onTextChanged(matches[0])
-            }
-            Log.d(TAG, "onResults: $matches")
-        }
-
-        override fun onPartialResults(partialResults: Bundle) {
-            val partialMatches = partialResults.getStringArrayList(RecognizerIntent.EXTRA_PARTIAL_RESULTS)
-            if (partialMatches != null && partialMatches.isNotEmpty()) {
-                onTextChanged(partialMatches[0])
-            }
-            Log.d(TAG, "onPartialResults: $partialMatches")
-        }
-
-        override fun onEvent(i: Int, bundle: Bundle) {}
-    })
-}

@@ -1,4 +1,4 @@
-package com.app.voicenotesai.presentation.screens
+package com.app.voicenotesai.presentation.screens.record_screen
 
 
 import androidx.compose.foundation.background
@@ -77,7 +77,6 @@ fun RecordingListItem(
         }
 
         Spacer(modifier = Modifier.width(16.dp))
-
         // Title and Timestamp Column
         Column {
             Text(
@@ -113,6 +112,7 @@ fun PreviewRecordingListItem(){
             "",
             "Titile",
             "desc",
+            "transcript",
             System.currentTimeMillis(),
             9
         ),

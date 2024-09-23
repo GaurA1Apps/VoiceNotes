@@ -1,7 +1,6 @@
-package com.app.voicenotesai.voice_to_text
+package com.app.voicenotesai.vertex_ai_response
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener

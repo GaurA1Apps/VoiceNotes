@@ -2,7 +2,6 @@ package com.app.voicenotesai.presentation.components
 
 import android.content.Context
 import android.os.Vibrator
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,6 +52,9 @@ fun AudioRecordBottomSheet(
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
 
     if (isOpen) {
+        isRecording = true
+        onAction(AudioRecordAction.StartRecording)
+
         ModalBottomSheet(
             containerColor = Color.White,
             modifier = modifier,
@@ -104,7 +106,7 @@ fun AudioRecordBottomSheet(
                                     tint = Color.Red
                                 )
                             },
-                            color = Color.White
+                            color = Color.Transparent
                         ) {
                             onAction(AudioRecordAction.Dismiss)
                         }
@@ -146,7 +148,7 @@ fun AudioRecordBottomSheet(
                                     tint = Color.Green
                                 )
                             },
-                            color = Color.White
+                            color = Color.Transparent
                         ) {
                             onDurationSaved(duration)
                             onAction(AudioRecordAction.SaveAudio)
@@ -155,10 +157,6 @@ fun AudioRecordBottomSheet(
                 }
             }
         }
-
-
-        isRecording = true
-        onAction(AudioRecordAction.StartRecording)
     }
 }
 
