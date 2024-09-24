@@ -87,27 +87,12 @@ fun MyApp() {
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            /*RecordFAB {
+            RecordFAB {
                 // Handle FAB click
                 if (permissionUtils.hasRecordAudioPermission()) {
                     isRecordBottomSheetOpen = true
                 } else {
                     permissionUtils.requestRecordAudioPermission()
-                }
-            }*/
-
-            Box() {
-                FloatingActionButton(
-                    onClick = { /* stub */ },
-                    shape = CircleShape,
-                    containerColor = Color.Red,
-                    contentColor = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(80.dp)
-                        .offset(y = 50.dp)
-                ) {
-                    FilledCircleIcon()
                 }
             }
         }
@@ -123,6 +108,9 @@ fun MyApp() {
                 onDurationSaved = {
                     Log.d("AudioRecordBottomSheet", "Duration saved: $it")
                 },
+                onTogglePause = { isPaused ->
+                    Log.d("AudioRecordBottomSheet", "Is paused: $isPaused")
+                },
                 onAction = { action ->
                     when (action) {
                         is AudioRecordAction.Dismiss -> {
@@ -137,8 +125,6 @@ fun MyApp() {
                         }
 
                         is AudioRecordAction.StartRecording -> {
-                            //Voice to Text
-
                             // Handle Audio Recording
                             File(
                                 navController.context.externalCacheDir?.absolutePath,
@@ -193,6 +179,13 @@ fun MyApp() {
                                 }
                                 isLoading = false
                             }
+                        }
+
+                        AudioRecordAction.PauseRecording -> {
+                            recorder.pause()
+                        }
+                        AudioRecordAction.ResumeRecording -> {
+                            recorder.resume()
                         }
                     }
                 }

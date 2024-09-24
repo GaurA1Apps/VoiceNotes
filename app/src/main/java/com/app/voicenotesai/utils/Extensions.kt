@@ -1,13 +1,6 @@
 package com.app.voicenotesai.utils
 
 import android.annotation.SuppressLint
-import android.content.Context
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import linc.com.amplituda.Amplituda
-import linc.com.amplituda.Cache
-import linc.com.amplituda.callback.AmplitudaErrorListener
-import linc.com.amplituda.exceptions.AmplitudaException
 import java.util.concurrent.TimeUnit
 
 @SuppressLint("DefaultLocale")
@@ -17,16 +10,6 @@ fun Long.formatTime(): String {
     val seconds = TimeUnit.MILLISECONDS.toSeconds(this) % 60
 
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
-}
-
-// Function to get the amplitude data
-suspend fun getAmplitudes(context: Context,path: String): List<Int> = withContext(Dispatchers.IO) {
-    val amplituda = Amplituda(context)
-    return@withContext amplituda.processAudio(path, Cache.withParams(Cache.REUSE))
-        .get(AmplitudaErrorListener {
-            it.printStackTrace()
-        })
-        .amplitudesAsList()
 }
 
 fun extractTitle(response: String): String {

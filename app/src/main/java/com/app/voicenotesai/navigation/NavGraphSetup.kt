@@ -45,7 +45,7 @@ fun NavGraphSetup(
             })
         }
         composable(Routes.Settings) {
-            SettingsScreen(paddingValues)
+            SettingsScreen()
         }
 
         composable(Routes.RecordDetail, enterTransition = {

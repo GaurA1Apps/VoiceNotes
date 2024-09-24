@@ -47,9 +47,9 @@ fun TimerDisplay(
 
     Text(
         text = timeString,
-        style = MaterialTheme.typography.displayMedium,
+        style = MaterialTheme.typography.displaySmall,
         fontWeight = FontWeight.Bold,
-        modifier = modifier.padding(bottom = 8.dp)
+        modifier = modifier.padding(bottom = 16.dp)
     )
 }
 

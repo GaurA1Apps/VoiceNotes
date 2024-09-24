@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,22 +20,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.app.voicenotesai.presentation.theme.bluetheme
 import com.app.voicenotesai.presentation.theme.grey
+import com.app.voicenotesai.presentation.theme.lightgrey
 
 @Composable
 fun GeneralSettings(
+    modifier: Modifier = Modifier ,
     iconResId: Int,
     text: String,
     onClick: () -> Unit
 ) {
     ElevatedCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .background(grey)
-            .padding(vertical = 4.dp)
+            .background(grey, shape = MaterialTheme.shapes.small)
             .clickable { onClick() }
     ) {
         Row(
@@ -47,6 +51,7 @@ fun GeneralSettings(
             Image(
                 painter = painterResource(id = iconResId),
                 contentDescription = "n",
+                colorFilter = ColorFilter.tint(Color.Blue),
                 modifier = Modifier
                     .padding(8.dp)
                     .size(25.dp)
@@ -63,6 +68,11 @@ fun GeneralSettings(
                 modifier = Modifier.padding(8.dp)
             )
         }
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp),
+            thickness = 1.dp,
+            color = lightgrey
+        )
     }
 }
 

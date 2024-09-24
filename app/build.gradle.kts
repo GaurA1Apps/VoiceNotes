@@ -110,8 +110,4 @@ dependencies {
     implementation(libs.firebase.appcheck.debug)
     implementation(libs.firebase.vertexai)
 
-    //Amplituda
-    implementation ("com.github.lincollincol:amplituda:2.2.2")
-
-
 }

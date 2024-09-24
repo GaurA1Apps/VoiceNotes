@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">VoiceNotesAI</string>
+    <string name="app_name">Flow</string>
     <string name="recording">Recording</string>
     <string name="record_audio">Tap on Button to Start Recording</string>
+    <string name="get_started">Get Started</string>
+    <string name="flow_transcribe_and_summarizes_recorded_audio_using_ai">Flow transcribe and summarizes recorded audio using AI</string>
 </resources>
