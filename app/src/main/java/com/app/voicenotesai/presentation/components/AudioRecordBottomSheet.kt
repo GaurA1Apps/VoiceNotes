@@ -2,6 +2,7 @@ package com.app.voicenotesai.presentation.components
 
 import android.content.Context
 import android.os.Vibrator
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,8 +48,7 @@ fun AudioRecordBottomSheet(
     isOpen: Boolean,
     sheetState: SheetState,
     onDurationSaved: (Long) -> Unit,
-    onAction: (AudioRecordAction) -> Unit,
-    onTogglePause: (isPaused: Boolean) -> Unit
+    onAction: (AudioRecordAction) -> Unit
 ) {
 
     var isRecording by remember {
@@ -95,9 +95,14 @@ fun AudioRecordBottomSheet(
                 )
 
                 // Timer Text
-                TimerDisplay(isTimerRunning = isTimerRunning) { elapsedTime ->
-                    duration = elapsedTime
-                }
+                TimerDisplay(
+                    isTimerRunning = isTimerRunning,
+                    isPaused = isPaused,
+                    onTimerStop = { totalTime ->
+                        // Handle timer stop event, totalTime is the elapsed time
+                        Log.d("AudioRecordBottomSheet","Timer stopped at: $totalTime seconds")
+                    }
+                )
 
                 // Button Row
                 Row(
@@ -197,7 +202,7 @@ fun AudioRecordBottomSheet(
                             color = grey
                         ) {
                             isPaused = !isPaused
-                            onTogglePause(isPaused)
+                            onAction(if (isPaused) AudioRecordAction.PauseRecording else AudioRecordAction.ResumeRecording)
                         }
 
                         Text(
@@ -222,7 +227,6 @@ fun AudioRecordBottomSheetPreview() {
         sheetState = rememberModalBottomSheetState(),
         onDurationSaved = {},
         onAction = {},
-        onTogglePause = {}
     )
 }
 

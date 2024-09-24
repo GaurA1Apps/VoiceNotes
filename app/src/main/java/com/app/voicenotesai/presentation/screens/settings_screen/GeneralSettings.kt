@@ -46,12 +46,12 @@ fun GeneralSettings(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
-                .padding(vertical = 8.dp),
+                .padding(vertical = 4.dp),
         ) {
             Image(
                 painter = painterResource(id = iconResId),
                 contentDescription = "n",
-                colorFilter = ColorFilter.tint(Color.Blue),
+                colorFilter = ColorFilter.tint(bluetheme),
                 modifier = Modifier
                     .padding(8.dp)
                     .size(25.dp)
@@ -69,7 +69,7 @@ fun GeneralSettings(
             )
         }
         HorizontalDivider(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
             thickness = 1.dp,
             color = lightgrey
         )

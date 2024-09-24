@@ -1,6 +1,7 @@
 package com.app.voicenotesai.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,6 +26,9 @@ fun NavGraphSetup(
     NavHost(
         navController = navController,
         startDestination = Routes.Record,
+        enterTransition = {
+            fadeIn()
+        },
         modifier = Modifier.padding(paddingValues)
     ) {
         composable(Routes.Record, enterTransition = {

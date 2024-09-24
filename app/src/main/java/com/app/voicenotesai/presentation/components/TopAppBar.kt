@@ -1,7 +1,9 @@
 package com.app.voicenotesai.presentation.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,17 +32,20 @@ fun TopBar() {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     TopAppBar(
+        modifier = Modifier.fillMaxWidth(),
         title = {
             Box(
-                modifier = Modifier.wrapContentWidth(),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
+                    modifier = Modifier.offset(x = 16.dp),
                     text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     ),
+                    color = Color.Black,
                     maxLines = 1
                 )
             }
@@ -55,7 +60,6 @@ fun TopBar() {
                 )
             }
         },
-        modifier = Modifier.fillMaxWidth(),
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = lightgrey,
             titleContentColor = MaterialTheme.colorScheme.primary

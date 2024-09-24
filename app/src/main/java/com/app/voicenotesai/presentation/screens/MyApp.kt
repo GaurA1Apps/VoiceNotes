@@ -2,6 +2,7 @@ package com.app.voicenotesai.presentation.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.app.voicenotesai.data.local.entities.AudioRecord
 import com.app.voicenotesai.navigation.NavGraphSetup
+import com.app.voicenotesai.navigation.Routes
 import com.app.voicenotesai.presentation.components.AudioRecordAction
 import com.app.voicenotesai.presentation.components.AudioRecordBottomSheet
 import com.app.voicenotesai.presentation.components.BottomNavigationBar
@@ -83,7 +85,11 @@ fun MyApp() {
             TopBar()
         },
         bottomBar = {
-            BottomNavigationBar(navController)
+            if (
+                navController.currentBackStackEntry?.destination?.route != Routes.RecordDetail
+            ) {
+                BottomNavigationBar(navController)
+            }
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
@@ -107,9 +113,6 @@ fun MyApp() {
                 sheetState = sheetState,
                 onDurationSaved = {
                     Log.d("AudioRecordBottomSheet", "Duration saved: $it")
-                },
-                onTogglePause = { isPaused ->
-                    Log.d("AudioRecordBottomSheet", "Is paused: $isPaused")
                 },
                 onAction = { action ->
                     when (action) {
@@ -172,6 +175,11 @@ fun MyApp() {
                                     )
                                     recordingsViewModel.insertRecord(record)
                                 } else {
+                                    Toast.makeText(
+                                        navController.context,
+                                        result.exceptionOrNull()?.localizedMessage?.plus(" Please Try Later"),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     Log.e(
                                         TAG,
                                         "Error generating AI response: ${result.exceptionOrNull()}"
@@ -184,6 +192,7 @@ fun MyApp() {
                         AudioRecordAction.PauseRecording -> {
                             recorder.pause()
                         }
+
                         AudioRecordAction.ResumeRecording -> {
                             recorder.resume()
                         }
@@ -198,7 +207,7 @@ fun MyApp() {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)) // Semi-transparent background
+                    .background(Color.White.copy(alpha = 1f)) // Semi-transparent background
             ) {
                 CircularProgressIndicator() // Show loading spinner
                 Spacer(modifier = Modifier.height(16.dp))

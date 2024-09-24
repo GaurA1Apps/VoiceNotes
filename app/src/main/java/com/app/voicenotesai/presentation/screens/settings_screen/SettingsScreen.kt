@@ -53,11 +53,26 @@ fun SettingsScreen() {
 
         GeneralSettings(
             iconResId = R.drawable.ic_verssion_info,
-            text = versionInfo
+            text = versionInfo,
+            modifier = Modifier.padding(bottom = 16.dp)
         ) {
 
         }
 
+        Text(
+            text = "Help",
+            fontWeight = FontWeight.Bold,
+            color = Color.Gray,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        GeneralSettings(
+            iconResId = R.drawable.ic_chat_support,
+            text = "Chat with Support",
+            modifier = Modifier.padding(bottom = 16.dp)
+        ) {
+
+        }
 
         Text(
             text = "Others",
@@ -75,15 +90,9 @@ fun SettingsScreen() {
         }
         GeneralSettings(
             iconResId = R.drawable.ic_share,
-            text = "Share App"
+            text = "Share Flow"
         ) {
             shareApp(context)
-        }
-        GeneralSettings(
-            iconResId = R.drawable.ic_chat_support,
-            text = "Help & Support"
-        ) {
-//            openUrl(context, context.getString(R.string.help_support_url))
         }
         GeneralSettings(
             iconResId = R.drawable.ic_pp_terms_of_use,

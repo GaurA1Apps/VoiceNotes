@@ -46,6 +46,6 @@ object SettingsUtils {
         } else {
             packageInfo.versionCode.toLong()
         }
-        return "Version $versionName, Build $versionCode)"
+        return "Version $versionName, Build $versionCode"
     }
 }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.delay
 fun TimerDisplay(
     modifier: Modifier = Modifier,
     isTimerRunning: Boolean,
+    isPaused: Boolean,
     onTimerStop: (Long) -> Unit
 ) {
     var timeInSeconds by remember { mutableLongStateOf(0L) }
@@ -33,13 +34,13 @@ fun TimerDisplay(
         (timeInSeconds % 60)
     )
 
-    LaunchedEffect(isTimerRunning) {
-        if (isTimerRunning) {
+    LaunchedEffect(isTimerRunning,isPaused) {
+        if (isTimerRunning && !isPaused) {
             while (true) {
                 delay(1000L)
                 timeInSeconds++
             }
-        } else {
+        } else if (!isTimerRunning) {
             onTimerStop(timeInSeconds)
             timeInSeconds = 0L
         }
@@ -56,5 +57,5 @@ fun TimerDisplay(
 @Preview
 @Composable
 fun TimerDisplayPreview() {
-    TimerDisplay(isTimerRunning = true, onTimerStop = {})
+    TimerDisplay(isTimerRunning = true, isPaused = false, onTimerStop = {})
 }

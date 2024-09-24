@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.voicenotesai.R
 import com.app.voicenotesai.data.local.entities.AudioRecord
+import com.app.voicenotesai.presentation.theme.bluetheme
+import com.app.voicenotesai.utils.formatAsTimeOrDate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,14 +38,12 @@ fun AudioRecordItem(
     onClick: () -> Unit ,
     onTogglePlayback: (Boolean) -> Unit
 ) {
-    val formatter = SimpleDateFormat("MMM dd,yyyy", Locale.getDefault())
-    val formattedDate = formatter.format(Date(audioRecord.timestamp))
 
     Column (
         modifier = Modifier.background(Color.White)
             .clickable { onClick() }
     ){
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         Row(
             modifier = Modifier
                 .padding(8.dp)
@@ -56,13 +56,14 @@ fun AudioRecordItem(
                     .padding(4.dp),
                 shape = RoundedCornerShape(4.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF0D1D5),
+                    containerColor = Color(0xFFD6E2FA),
                     contentColor = Color.Red,
                 )
             ) {
                 Icon(
                     modifier = Modifier.padding(4.dp),
                     painter = painterResource(id = R.drawable.ic_mic),
+                    tint = bluetheme,
                     contentDescription = "Microphone Icon"
                 )
             }
@@ -78,13 +79,13 @@ fun AudioRecordItem(
                     fontSize = 16.sp,
                     maxLines = 1
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+
                 Row {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = formattedDate,
+                        text = audioRecord.timestamp.formatAsTimeOrDate(),
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Light,
+                        fontWeight = FontWeight.Normal,
                     )
                     Text(
                         text = formatDuration(audioRecord.durationInSeconds),
