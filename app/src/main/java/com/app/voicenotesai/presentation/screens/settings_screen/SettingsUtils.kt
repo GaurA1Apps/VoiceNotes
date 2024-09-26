@@ -32,7 +32,7 @@ object SettingsUtils {
         }
     }
 
-    private fun openUrl(context: Context, url: String) {
+    fun openUrl(context: Context, url: String) {
         val i = Intent(Intent.ACTION_VIEW)
         i.setData(Uri.parse(url))
         context.startActivity(i)

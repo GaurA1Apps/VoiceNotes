@@ -5,31 +5,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun WaveformView(
-    // List of amplitudes to plot
     amplitudes: List<Int>,
     modifier: Modifier = Modifier,
-    color: Color = Color.Blue
+    color: Color = Color.Blue,
+    gapDp: Dp = 2.dp // customizable gap between the bars
 ) {
+    val gapPx = with(LocalDensity.current) { gapDp.toPx() }
+
     Canvas(modifier = modifier) {
         val canvasWidth = size.width
         val canvasHeight = size.height
-        val barWidth = canvasWidth / amplitudes.size
-        val gap = 4.dp.toPx() // Adjust this value to control the size of the gap
+        val totalGaps = (amplitudes.size - 1) * gapPx
+        val barWidth = (canvasWidth - totalGaps) / amplitudes.size
 
         amplitudes.forEachIndexed { index, amplitude ->
-            val barHeight = amplitude / 100f * canvasHeight // Scale amplitude to fit the canvas
-            val xPosition = index * (barWidth + gap) // Adding gap between bars
+            // Scale amplitude and ensure it fits in the height
+            val barHeight = (amplitude / 100f) * canvasHeight
+            val xPosition = index * (barWidth + gapPx)
 
             drawLine(
-                color = color, // You can change this to your preferred color
-                start = androidx.compose.ui.geometry.Offset(xPosition, canvasHeight / 2 - barHeight / 2),
-                end = androidx.compose.ui.geometry.Offset(xPosition, canvasHeight / 2 + barHeight / 2),
+                color = color,
+                start = Offset(xPosition, canvasHeight / 2 - barHeight / 2),
+                end = Offset(xPosition, canvasHeight / 2 + barHeight / 2),
                 strokeWidth = barWidth
             )
         }

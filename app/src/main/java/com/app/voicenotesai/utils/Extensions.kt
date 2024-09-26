@@ -1,6 +1,7 @@
 package com.app.voicenotesai.utils
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.remember
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -14,6 +15,13 @@ fun Long.formatTime(): String {
 
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
+
+fun Long.formatDuration(): String {
+    val dateFormat =  SimpleDateFormat("dd MMM yyyy hh:mm a", Locale.getDefault())
+    val formattedDate = dateFormat.format(Date(this))
+    return formattedDate
+}
+
 
 fun Long.formatAsTimeOrDate(): String {
     val currentTime = System.currentTimeMillis()

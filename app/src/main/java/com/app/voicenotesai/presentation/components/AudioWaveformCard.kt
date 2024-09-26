@@ -1,5 +1,6 @@
 package com.app.voicenotesai.presentation.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,8 +20,12 @@ import com.app.voicenotesai.R
 
 @Composable
 fun AudioWaveformCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPlayAudio: (Boolean) -> Unit
 ) {
+
+    var isPlaying by remember { mutableStateOf(false) }
+
     ElevatedCard(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(16.dp),
@@ -32,45 +37,56 @@ fun AudioWaveformCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            // Play button
-            IconButton(onClick = { /* Handle Play Button click */ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_play_round), // Your play icon resource
-                    contentDescription = "Play Button",
-                    tint = Color.Blue,
-                    modifier = Modifier.size(36.dp)
-                )
+            AnimatedContent(targetState = isPlaying, label = "") { playingState ->
+                if (playingState) {
+                    // Pause button
+                    IconButton(onClick = {
+                        isPlaying = false // Update the state here
+                        onPlayAudio(isPlaying)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_pause_round),
+                            contentDescription = "Pause Button",
+                            tint = Color.Blue,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                } else {
+                    // Play button
+                    IconButton(onClick = {
+                        isPlaying = true // Update the state here
+                        onPlayAudio(isPlaying)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_play_round),
+                            contentDescription = "Play Button",
+                            tint = Color.Blue,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                }
             }
 
-            // Waveform visualization
-            Box(
+            WaveformView(
+                amplitudes = List(50) { (0..100).random() }, // Sample data, replace with real amplitudes
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
                     .padding(horizontal = 8.dp)
-                    .height(36.dp)
-            ) {
-                WaveformView(
-                    amplitudes = List(50) { (0..100).random() }, // Sample data, replace with real amplitudes
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.Red
-                )
+                    .height(24.dp)
+            )
 
-                // Timer
-                Text(
-                    text = "00:04", // Update dynamically
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd) // Aligns the timer to the end of the Box
-                        .padding(end = 8.dp) // Optional padding from the end
-                )
-            }
+            Text(
+                text = "00:04", // Update dynamically
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+            )
         }
     }
 }
@@ -78,5 +94,9 @@ fun AudioWaveformCard(
 @Preview
 @Composable
 fun AudioCardViewPreview() {
-    AudioWaveformCard()
+    AudioWaveformCard(
+        onPlayAudio = { isPlaying ->
+            // Handle audio playback here
+        }
+    )
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.app.voicenotesai.R
 import com.app.voicenotesai.presentation.screens.settings_screen.SettingsUtils.getAppVersion
+import com.app.voicenotesai.presentation.screens.settings_screen.SettingsUtils.openUrl
 import com.app.voicenotesai.presentation.screens.settings_screen.SettingsUtils.rateUS
 import com.app.voicenotesai.presentation.screens.settings_screen.SettingsUtils.shareApp
 import com.app.voicenotesai.presentation.theme.grey
@@ -64,7 +65,7 @@ fun SettingsScreen() {
             fontWeight = FontWeight.Bold,
             color = Color.Gray,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
         GeneralSettings(
             iconResId = R.drawable.ic_chat_support,
@@ -79,7 +80,7 @@ fun SettingsScreen() {
             fontWeight = FontWeight.Bold,
             color = Color.Gray,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
         GeneralSettings(
@@ -98,13 +99,13 @@ fun SettingsScreen() {
             iconResId = R.drawable.ic_pp_terms_of_use,
             text = "Privacy Policy"
         ) {
-//            openUrl(context, context.getString(R.string.privacy_policy_url))
+            openUrl(context, context.getString(R.string.privacy_policy_url))
         }
         GeneralSettings(
             iconResId = R.drawable.ic_pp_terms_of_use,
             text = "Terms Of Use"
         ) {
-//            openUrl(context, context.getString(R.string.terms_of_use_url))
+            openUrl(context, context.getString(R.string.terms_of_use_url))
         }
     }
 }

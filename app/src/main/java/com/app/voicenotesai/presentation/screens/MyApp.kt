@@ -54,6 +54,7 @@ import com.app.voicenotesai.utils.PermissionUtils
 import com.app.voicenotesai.utils.extractSummary
 import com.app.voicenotesai.utils.extractTitle
 import com.app.voicenotesai.utils.extractTranscript
+import com.app.voicenotesai.utils.formatDuration
 import com.app.voicenotesai.vertex_ai_response.AIResponseGenerator
 import kotlinx.coroutines.launch
 import java.io.File
@@ -78,6 +79,7 @@ fun MyApp() {
 
     //Audio Recorder and Player
     val recorder by lazy { AndroidAudioRecorder(navController.context) }
+    var fileName = ""
     var audioFile: File? = null
 
     Scaffold(
@@ -103,7 +105,11 @@ fun MyApp() {
             }
         }
     ) { innerPadding ->
-        NavGraphSetup(navController = navController, innerPadding, recordingsViewModel)
+        NavGraphSetup(
+            navController = navController,
+            innerPadding,
+            recordingsViewModel
+        )
 
         //Bottom Sheet for recording
         if (isRecordBottomSheetOpen) {
@@ -129,9 +135,10 @@ fun MyApp() {
 
                         is AudioRecordAction.StartRecording -> {
                             // Handle Audio Recording
+                            fileName = "Flow_Recording_${System.currentTimeMillis().formatDuration()}.mp3"
                             File(
-                                navController.context.externalCacheDir?.absolutePath,
-                                "audio_${System.currentTimeMillis()}.mp3"
+                                navController.context.filesDir,
+                                fileName
                             ).also {
                                 recorder.start(it)
                                 audioFile = it

@@ -41,7 +41,7 @@ fun RecordFAB(
             modifier = Modifier
                 .align(Alignment.Center)
                 .size(80.dp)
-                .offset(y = 50.dp)
+                .offset(y = 64.dp)
         ) {
             FilledCircleIcon()
         }

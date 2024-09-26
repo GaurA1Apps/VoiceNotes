@@ -18,6 +18,7 @@ class AndroidAudioPlayer(
             }
             setOnCompletionListener {
                 stop()
+                release()
             }
             player = this
             start()
